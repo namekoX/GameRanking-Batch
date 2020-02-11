@@ -72,30 +72,27 @@ class GetRank(object):
         return 0
 
     def getNijiyome(self):
-        html_doc = requests.get("https://www.nijiyome.com/app/list?st=1").text
+        html_doc = requests.get("https://www.nijiyome.jp/app/list?st=1").text
         soup = BeautifulSoup(html_doc, 'html.parser')
 
         titlelist = []
-        names = soup.find_all('p', {'class': 'name'})
+        names = soup.find_all('p', {'class': 'appTitle'})
         for name in names:
-            titles = name.find_all('a')
-            for title in titles:
-                titlelist.append(title.get_text(strip=True))
+            titlelist.append(name.get_text(strip=True))
 
         commentlist = []
-        details = soup.find_all('div', {'class': 'detail'})
+        details = soup.find_all('p', {'class': 'appDiscription'})
         for detail in details:
-            comments = detail.find_all('p')
-            for comment in comments:
-                commentlist.append(comment.get_text(strip=True))
+            commentlist.append(detail.get_text(strip=True))
 
         linkslist = []
+        itmes = soup.find_all('a', {'class': 'appItem'})
+        for item in itmes:
+            linkslist.append(item['href'])
+
         thumblist = []
         figures = soup.find_all('figure', {'class': 'image'})
         for figure in figures:
-            links = figure.find_all('a')
-            for link in links:
-                linkslist.append(link['href'])
             thumbs = figure.find_all('img')
             for thumb in thumbs:
                 thumblist.append('https:' + thumb['src'])
